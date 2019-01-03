@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import queryString from 'query-string'
 import FlightBoard from './flightBoard'
 // import SpatialAudio from './spatialAudio'
+import _ from 'lodash'
 import Info from './info'
 import Search from './search'
 import { colours, spacing, timings } from '../style/variables'
@@ -22,10 +23,13 @@ class Navigation extends Component {
     };
   }
 
-  static getDerivedStateFromProps(props) {
-    return {
-      ...props
-    };
+  static getDerivedStateFromProps(props, state) {
+    if (!_.isEqual(props, state)) {
+      return {
+        ...props
+      }
+    }
+    return null;
   }
 
   toggleChild(index) {

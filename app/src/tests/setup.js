@@ -15,7 +15,7 @@ export const location = {
   search: ''
 }
 
-export const data = countries.filter((country) => country.country === 'AU')
+export const data = countries.filter((country) => country.country === 'AU')[0].airports;
 
 export const mapBounds = {
   getNorthEast: () => {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import classNames from 'classnames'
 import moment from 'moment-timezone'
+import _ from 'lodash'
 import { colours } from '../style/variables'
 import { AirportConstants } from '../constants/airports'
 import { Card, CardTitle, CardTime, CardCopy, Heading } from './shared'
@@ -12,15 +13,20 @@ import Flyout from './flyout'
 class FlightBoard extends Component {
   constructor(props) {
     super(props);
-    this.state = {...props};
+    this.state = {
+      ...props
+    };
     this.song = new Song();
     this.maxItems = 10;
   }
 
-  static getDerivedStateFromProps(props) {
-    return {
-      ...props
-    };
+  static getDerivedStateFromProps(props, state) {
+    if (!_.isEqual(props, state)) {
+      return {
+        ...props
+      }
+    }
+    return null;
   }
 
   getAirportByCode(code) {
@@ -41,12 +47,14 @@ class FlightBoard extends Component {
           if (this.isValidFlight(flight, i)) {
             return (
               <Flight
+                key={`${flight.callsign}-${i}`}
                 target={flight.callsign ? '_blank' : '_self'}
                 href={flight.callsign ? `http://flightaware.com/live/flight/${flight.callsign.toUpperCase()}` : 'javascript://'}
+                activetype={flight.departure_airport.type}
                 className={classNames({
                   'is-transitioning': Date.now() - flight.timestamp > 5,
                   'is-old': Date.now() - flight.timestamp > this.song.getBars(2)
-                })} types={Object.keys(AirportConstants)} activetype={flight.departure_airport.type} key={`${flight.callsign}-${i}`}>
+                })} types={Object.keys(AirportConstants)} >
                   <CardTitle>{flight.callsign ? flight.callsign : '-' }</CardTitle>
                   <CardTime>{moment(flight.firstSeen * 1000).tz(flight.timezone_id).format('HH:mm')}</CardTime>
                   <CardCopy>{flight.departure_airport.name}</CardCopy>
